@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Event::class, 'event');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +29,7 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        return view('events.create');
     }
 
     /**
@@ -31,7 +37,14 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        //
+        $event = new Event($request->all());
+        $event->user_id = $request->user()->id;
+
+        $event->save();
+
+        return redirect()
+            ->route('events.show', $event)
+            ->with('notice', '予定を登録しました｡');
     }
 
     /**
@@ -39,7 +52,7 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        //
+        return view('events.show')->with(compact('event'));
     }
 
     /**
@@ -47,7 +60,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        return view('events.edit')->with(compact('event'));
     }
 
     /**
@@ -55,7 +68,12 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        $event->fill($request->all());
+        $event->save();
+
+        return redirect()
+            ->route('events.show', $event)
+            ->with('notice', '予定を更新しました');
     }
 
     /**
@@ -63,6 +81,9 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return redirect()
+            ->route('events.index')
+            ->with('notice', '予定を削除しました･');
     }
 }
