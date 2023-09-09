@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -13,7 +14,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $events = Auth::user()->events;
+        return view('events.index')->with(compact('events'));
     }
 
     /**
